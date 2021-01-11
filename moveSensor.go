@@ -17,20 +17,16 @@ func main() {
 
     // Lookup a pin by its number:
 
-    p:= gpioreg.ByName("16")
-
-
-
-    // p, err := gpioreg.ByName("16")
-    // if err != nil {
-    //     log.Fatal(err)
-    // }
-    // fmt.Printf("%s: %s\n", p, p.Function())
+    p := gpioreg.ByName("GPI16")
+    if p != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("%s: %s\n", p, p.Function())
 
     // Set it as input.
-    // if err = p.In(gpio.PullNoChange, gpio.RisingEdge); err != nil {
-    //     log.Fatal(err)
-    // }
+    if err = p.In(gpio.PullNoChange, gpio.RisingEdge); err != nil {
+        log.Fatal(err)
+    }
 
     // Wait for edges as detected by the hardware.
     for {
