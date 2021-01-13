@@ -1,38 +1,38 @@
-package main
+// package main
 
-import (
-    "fmt"
-    "log"
+// import (
+//     "fmt"
+//     "log"
 
-    "periph.io/x/conn/v3/gpio"
-    "periph.io/x/conn/v3/gpio/gpioreg"
-    "periph.io/x/host/v3"
-)
+//     "periph.io/x/conn/v3/gpio"
+//     "periph.io/x/conn/v3/gpio/gpioreg"
+//     "periph.io/x/host/v3"
+// )
 
-func main() {
-    // Load all the drivers:
-    if _, err := host.Init(); err != nil {
-        log.Fatal(err)
-    }
+// func main() {
+//     // Load all the drivers:
+//     if _, err := host.Init(); err != nil {
+//         log.Fatal(err)
+//     }
 
-    // Lookup a pin by its number:
+//     // Lookup a pin by its number:
 
-    p := gpioreg.ByName("GPI16")
-    if p != nil {
-        log.Fatal(err)
-    }
-    fmt.Printf("%s: %s\n", p, p.Function())
+//     p := gpioreg.ByName("GPI16")
+//     if p != nil {
+//         log.Fatal(err)
+//     }
+//     fmt.Printf("%s: %s\n", p, p.Function())
 
-    // Set it as input.
-    if err = p.In(gpio.PullNoChange, gpio.RisingEdge); err != nil {
-        log.Fatal(err)
-    }
+//     // Set it as input.
+//     if err = p.In(gpio.PullNoChange, gpio.RisingEdge); err != nil {
+//         log.Fatal(err)
+//     }
 
-    // Wait for edges as detected by the hardware.
-    for {
-        p.WaitForEdge(-1)
-        if p.Read() == gpio.High {
-          fmt.Printf("You moved!\n")
-        }
-    }
-}
+//     // Wait for edges as detected by the hardware.
+//     for {
+//         p.WaitForEdge(-1)
+//         if p.Read() == gpio.High {
+//           fmt.Printf("You moved!\n")
+//         }
+//     }
+// }

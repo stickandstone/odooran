@@ -1,19 +1,31 @@
 import RPi.GPIO as GPIO
 import time
-GPIO.setmode(GPIO.BCM) # GPIO Numbers instead of board numbers
+GPIO.setmode(GPIO.BCM)  # GPIO Numbers instead of board numbers
 
 
 print("Start")
-RELAIS_1_GPIO = 17 #pin 11
-GPIO.setup(RELAIS_1_GPIO, GPIO.OUT) # GPIO Assign mode
+RELAIS_1_GPIO = 17  # pin 11
+GPIO.setup(RELAIS_1_GPIO, GPIO.OUT)  # GPIO Assign mode
 
-for i in range(3):
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(RELAIS_1_GPIO, GPIO.OUT) # GPIO Assign mode
-	GPIO.output(RELAIS_1_GPIO, GPIO.LOW) # out
-	time.sleep(1)
-	GPIO.cleanup()
-	time.sleep(1)
+
+def click():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(RELAIS_1_GPIO, GPIO.OUT)  # GPIO Assign mode
+    time.sleep(1)
+    GPIO.cleanup()
+
+
+def test_click():
+    print('CLICK!')
+
+
+# for i in range(3):
+# 	GPIO.setmode(GPIO.BCM)
+# 	GPIO.setup(RELAIS_1_GPIO, GPIO.OUT) # GPIO Assign mode
+# 	GPIO.output(RELAIS_1_GPIO, GPIO.LOW) # out
+# 	time.sleep(1)
+# 	GPIO.cleanup()
+# 	time.sleep(1)
 
 # GPIO.output(RELAIS_1_GPIO, 1) # out
 # time.sleep(2)
