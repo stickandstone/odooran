@@ -9,7 +9,13 @@ from uuid import uuid4
 from telegram import InlineQueryResultArticle, ParseMode, InputTextMessageContent, Update
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackContext
 from telegram.utils.helpers import escape_markdown
-import relay
+import sys
+
+if sys.argv[1] == 'test':
+    import ralay_fake
+else:
+    import relay
+
 SECRET = open('secret.txt').read()
 
 logging.basicConfig(
@@ -18,9 +24,12 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-
+global gate_is_close
+gate_is_close = True
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
+
+
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
     update.message.reply_text('''Привет! Это одоран, бот который открывает гаражные ворота. 
@@ -28,10 +37,19 @@ def start(update: Update, context: CallbackContext) -> None:
 
 
 def make_click(update: Update, context: CallbackContext) -> None:
+    global gate_is_close
+
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Открываю дверь...')
+    if gate_is_close:
+        update.message.reply_text('Открываю дверь...')
+    else:
+        update.message.reply_text('Закрываю дверь...')
+
+    gate_is_close = not gate_is_close
+
     # relay.test_click()
     relay.click()
+    return gate_is_close
 
 
 def main() -> None:
