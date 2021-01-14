@@ -10,10 +10,10 @@ from telegram import InlineQueryResultArticle, ParseMode, InputTextMessageConten
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackContext
 from telegram.utils.helpers import escape_markdown
 import sys
-
-if sys.argv[1] == 'test':
-    import ralay_fake
-else:
+try:
+    if sys.argv[1] == 'test':
+        import relay_fake
+except:
     import relay
 
 SECRET = open('secret.txt').read()
@@ -24,7 +24,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-global gate_is_close
 gate_is_close = True
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
@@ -39,7 +38,6 @@ def start(update: Update, context: CallbackContext) -> None:
 def make_click(update: Update, context: CallbackContext) -> None:
     global gate_is_close
 
-    """Send a message when the command /start is issued."""
     if gate_is_close:
         update.message.reply_text('Открываю дверь...')
     else:
@@ -47,9 +45,7 @@ def make_click(update: Update, context: CallbackContext) -> None:
 
     gate_is_close = not gate_is_close
 
-    # relay.test_click()
     relay.click()
-    return gate_is_close
 
 
 def main() -> None:
@@ -58,8 +54,6 @@ def main() -> None:
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("click", make_click))
-
-    # on noncommand i.e message - echo the message on Telegram
 
     # Start the Bot
     updater.start_polling()
