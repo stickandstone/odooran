@@ -17,3 +17,6 @@ def click() -> None:
 
 def test_click():
     print('CLICK!')
+
+
+GPIO.cleanup()
