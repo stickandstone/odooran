@@ -17,7 +17,10 @@ else:
     import relay
 
 
-SECRET = open('secret.txt').read()
+SECRET, IDD = open('secret.txt').read().split(',')
+print(SECRET)
+print(IDD)
+
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -31,30 +34,38 @@ TIME_TO_OPEN = 20
 past_click_time = 0
 
 def start(update: Update, context: CallbackContext) -> None:
-
-    update.message.reply_text('''Привет! Это одоран, бот который открывает гаражные ворота. 
-    Используй /click для открытия, остановки или закрытия двери.''')
-    # Осталось кнопка, промежуточное состояние ворот откр\закр, проверить безопасность, оформить репо
+    idd = update.message.chat_id
+    print(idd)
+    if idd != int(IDD):
+        update.message.reply_text('Доступ ограничен.')
+    else:
+        update.message.reply_text('''Привет! Это одоран, бот который открывает гаражные ворота. 
+        Используй /click для открытия, остановки или закрытия двери.''')
+        # Осталось кнопка, промежуточное состояние ворот откр\закр, проверить безопасность, оформить репо
     
 def make_click(update: Update, context: CallbackContext) -> None:
-    global gate_is_close, past_click_time
-
-    time_between_ckicks = time.time() - past_click_time
-    past_click_time = time.time()
-    gate_is_moving = time_between_ckicks < TIME_TO_OPEN
-    
-    if gate_is_moving:
-        relay.click()
-
-    if gate_is_close:
-        update.message.reply_text('⬆️Открываю дверь...')
-        relay.click()
-
+    idd = update.message.chat_id
+    if idd != int(IDD):
+        update.message.reply_text('Go away!')
     else:
-        update.message.reply_text('⬇️Закрываю дверь...')
-        relay.click()
+        global gate_is_close, past_click_time
 
-    gate_is_close = not gate_is_close
+        time_between_ckicks = time.time() - past_click_time
+        past_click_time = time.time()
+        gate_is_moving = time_between_ckicks < TIME_TO_OPEN
+        
+        if gate_is_moving:
+            relay.click()
+
+        if gate_is_close:
+            update.message.reply_text('⬆️⬆️⬆️Открываю ворота⬆️⬆️⬆️')
+            relay.click()
+
+        else:
+            update.message.reply_text('⬇️⬇️⬇️Закрываю ворота⬇️⬇️⬇️')
+            relay.click()
+
+        gate_is_close = not gate_is_close
 
 def main() -> None:
     updater = Updater(SECRET, use_context=True)
