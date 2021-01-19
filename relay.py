@@ -11,12 +11,8 @@ def click() -> None:
     '''Makes one click and releases the relay'''
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(RELAIS_1_GPIO, GPIO.OUT)
-    time.sleep(1)
+    time.sleep(0.3)
     GPIO.cleanup()
-
-
-def test_click():
-    print('CLICK!')
-
+    time.sleep(1)
 
 GPIO.cleanup()
