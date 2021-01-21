@@ -12,7 +12,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 
 if len(sys.argv) > 1 and sys.argv[1] == 'test':
-    pass
+    import test_relay as relay
 else:
     import relay
 
@@ -33,6 +33,7 @@ gate_is_close = True
 TIME_TO_OPEN = 20
 past_click_time = 0
 
+
 def start(update: Update, context: CallbackContext) -> None:
     idd = update.message.chat_id
     print(idd)
@@ -42,7 +43,8 @@ def start(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('''Привет! Это одоран, бот который открывает гаражные ворота. 
         Используй /click для открытия, остановки или закрытия двери.''')
         # Осталось кнопка, промежуточное состояние ворот откр\закр, проверить безопасность, оформить репо
-    
+
+
 def make_click(update: Update, context: CallbackContext) -> None:
     idd = update.message.chat_id
     if idd != int(IDD):
@@ -53,19 +55,19 @@ def make_click(update: Update, context: CallbackContext) -> None:
         time_between_ckicks = time.time() - past_click_time
         past_click_time = time.time()
         gate_is_moving = time_between_ckicks < TIME_TO_OPEN
-        
+
         if gate_is_moving:
             relay.click()
 
         if gate_is_close:
-            update.message.reply_text('⬆️⬆️⬆️Открываю ворота⬆️⬆️⬆️')
-            relay.click()
-
+            message = 'Открываю ворота'
         else:
-            update.message.reply_text('⬇️⬇️⬇️Закрываю ворота⬇️⬇️⬇️')
-            relay.click()
+            message = 'Закрываю ворота'
 
+        update.message.reply_text(message)
+        relay.click()
         gate_is_close = not gate_is_close
+
 
 def main() -> None:
     updater = Updater(SECRET, use_context=True)
