@@ -45,28 +45,43 @@ def start(update: Update, context: CallbackContext) -> None:
         # Осталось кнопка, промежуточное состояние ворот откр\закр, проверить безопасность, оформить репо
 
 
+position = 0
+t0 = time.time()
+gate_is_opening = True
+
+
 def make_click(update: Update, context: CallbackContext) -> None:
     idd = update.message.chat_id
     if idd != int(IDD):
         update.message.reply_text('Go away!')
     else:
-        global gate_is_close, past_click_time
+        global t0, position, gate_is_opening
+        t1 = time.time()
+        if position != 0:
+            if gate_is_opening:
+                position = t0 - t1
 
-        time_between_ckicks = time.time() - past_click_time
-        past_click_time = time.time()
-        gate_is_moving = time_between_ckicks < TIME_TO_OPEN
+            else:
+                position = t1 - t0
 
-        if gate_is_moving:
-            relay.click()
-
-        if gate_is_close:
+        if position <= 0:
             message = 'Открываю ворота'
-        else:
+            position = 1
+        elif position >= 25:
             message = 'Закрываю ворота'
+            position = 24
 
-        update.message.reply_text(message)
+        else:
+            relay.click()
+            if gate_is_opening:
+                message = 'Открываю ворота'
+            else:
+                message = 'Закрываю ворота'
+
+        gate_is_opening = not gate_is_opening
+        t0 = t1
         relay.click()
-        gate_is_close = not gate_is_close
+        update.message.reply_text(message)
 
 
 def main() -> None:
