@@ -7,7 +7,7 @@ GPIO.setup(RELAIS_1_GPIO, GPIO.OUT)  # GPIO Assign mode
 
 
 def click() -> None:
-    '''Makes one click and releases the relay'''
+    """Makes one click and releases the relay"""
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(RELAIS_1_GPIO, GPIO.OUT)
     time.sleep(0.3)

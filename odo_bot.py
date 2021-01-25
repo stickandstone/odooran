@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # pylint: disable=W0613, C0116
 # type: ignore[union-attr]
 
@@ -18,9 +17,6 @@ else:
 
 
 SECRET, IDD = open('secret.txt').read().split(',')
-print(SECRET)
-print(IDD)
-
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -28,31 +24,23 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Глобальные значения, которые описывают состояние двери.
-gate_is_close = True
-TIME_TO_OPEN = 20
-past_click_time = 0
-
 
 def start(update: Update, context: CallbackContext) -> None:
-    idd = update.message.chat_id
-    print(idd)
-    if idd != int(IDD):
+    if update.message.chat_id != int(IDD):
         update.message.reply_text('Доступ ограничен.')
     else:
-        update.message.reply_text('''Привет! Это одоран, бот который открывает гаражные ворота. 
+        update.message.reply_text('''Привет! Это одоран, бот который открывает гаражные ворота.
         Используй /click для открытия, остановки или закрытия двери.''')
-        # Осталось кнопка, промежуточное состояние ворот откр\закр, проверить безопасность, оформить репо
 
 
+# Глобальные значения которые описывают состояние двери.
 position = 0
 t0 = time.time()
 gate_is_opening = True
 
 
 def make_click(update: Update, context: CallbackContext) -> None:
-    idd = update.message.chat_id
-    if idd != int(IDD):
+    if update.message.chat_id != int(IDD):
         update.message.reply_text('Go away!')
     else:
         global t0, position, gate_is_opening
@@ -60,7 +48,6 @@ def make_click(update: Update, context: CallbackContext) -> None:
         if position != 0:
             if gate_is_opening:
                 position = t0 - t1
-
             else:
                 position = t1 - t0
 
@@ -85,7 +72,7 @@ def make_click(update: Update, context: CallbackContext) -> None:
 
 
 def main() -> None:
-    updater = Updater(SECRET, use_context=True)
+     updater = Updater(SECRET, use_context=True)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
