@@ -5,12 +5,18 @@
 
 from servises import gate_control as gate
 import logging
-# from uuid import uuid4
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 
 
 SECRET, IDD = open('secret.txt').read().split(',')
+# Глобальное состояние ворот.
+gate_state = {
+    "pos": 0,
+    "t0": 0,
+    "gio": True,
+    "msg": ""
+}
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -23,26 +29,19 @@ def start(update: Update, context: CallbackContext) -> None:
     if update.message.chat_id != int(IDD):
         update.message.reply_text('Доступ ограничен.')
     else:
-        update.message.reply_text('''Привет! Это бот который контролирует гаражные ворота.
+        update.message.reply_text('''Это бот который контролирует гаражные ворота.
         Используй /click для управления.''')
 
 
-# Глобальные значения которые описывают состояние двери.
-position = 0
-t0 = 0
-gate_is_opening = True
-
-
 def make_click(update: Update, context: CallbackContext) -> None:
-    """Открывает или закрывает ворота и сообщает об это в телеграм"""
+    """Открывает или закрывает ворота и сообщает об этом в телеграм"""
 
     if update.message.chat_id != int(IDD):
         update.message.reply_text('Go away!')
     else:
-        global t0, position, gate_is_opening
-        t0, position, gate_is_opening, message = gate.action(
-            t0, position, gate_is_opening)
-        update.message.reply_text(message)
+        global gate_state
+        gate_state = gate.action(gate_state)
+        update.message.reply_text(gate_state["msg"])
 
 
 def main() -> None:

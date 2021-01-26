@@ -7,26 +7,32 @@ else:
     from servises import relay
 
 
-def action(t0, position, gate_is_opening) -> str:
+def action(gate_state) -> dict:
     """
     Подает сигнал на реле и возвращает сообщение с состоянием ворот.
     """
+    # распаковка состояния
+    position = gate_state['pos']
+    t0 = gate_state['t0']
+    gate_is_opening = gate_state['gio']
     t1 = time.time()
-    # Можно представить движение ворот как движение по прямой.
+    # Можно представить движение ворот как движение точки по прямой.
     # закрыто |----#--------------| открыто
-    # Если ворота открываются, то точка смещается вправо.
-    # Иначе они закрываются и точнка смещается влево.
+    # Если ворота открываются, то точка смещается вправо и значение увеличивается.
+    # Иначе они закрываются, точнка смещается влево и значение уменьшается.
     if position != 0:
         if gate_is_opening:
-            position = t0 - t1
+            position = position + t0 - t1
         else:
-            position = t1 - t0
+            position = position + t1 - t0
 
     # Проверка крайних положений ворот, открыты или закрыты.
     if position <= 0:
+        # закрыты
         message = 'Открываю ворота'
         position = 1
     elif position >= 25:
+        # открыты
         message = 'Закрываю ворота'
         position = 24
 
@@ -44,4 +50,10 @@ def action(t0, position, gate_is_opening) -> str:
     t0 = t1
     relay.click()
 
-    return(t0, position, gate_is_opening, message)
+    # упаковка состояния в словарь
+    gate_state['pos'] = position
+    gate_state['t0'] = t0
+    gate_state['gio'] = gate_is_opening
+    gate_state['msg'] = message
+
+    return(gate_state)
