@@ -6,12 +6,12 @@
 from servises import gate_control as gate
 import logging
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, CallbackContext
 
 
 SECRET, IDD = open('secret.txt').read().split(',')
-# Глобальное состояние ворот.
-gate_state = {
+
+gate_state_global = {
     "pos": 0,
     "t0": 0,
     "gio": True,
@@ -29,19 +29,19 @@ def start(update: Update, context: CallbackContext) -> None:
     if update.message.chat_id != int(IDD):
         update.message.reply_text('Доступ ограничен.')
     else:
-        update.message.reply_text('''Это бот который контролирует гаражные ворота.
+        update.message.reply_text('''Это бот для контроля гаражных ворот.
         Используй /click для управления.''')
 
 
 def make_click(update: Update, context: CallbackContext) -> None:
-    """Открывает или закрывает ворота и сообщает об этом в телеграм"""
+    """turns the relay on and sends a telegram message"""
 
     if update.message.chat_id != int(IDD):
         update.message.reply_text('Go away!')
     else:
-        global gate_state
-        gate_state = gate.action(gate_state)
-        update.message.reply_text(gate_state["msg"])
+        global gate_state_global
+        gate_state_global = gate.action(gate_state_global)
+        update.message.reply_text(gate_state_global["msg"])
 
 
 def main() -> None:
@@ -50,7 +50,7 @@ def main() -> None:
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("click", make_click))
-    # Start the Bot
+
     updater.start_polling()
 
     updater.idle()

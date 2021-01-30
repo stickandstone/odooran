@@ -9,48 +9,38 @@ else:
 
 def action(gate_state) -> dict:
     """
-    Подает сигнал на реле и возвращает сообщение с состоянием ворот.
+    Turns the relay on and return the gate status value.
     """
-    # распаковка состояния
     position = gate_state['pos']
     t0 = gate_state['t0']
     gate_is_opening = gate_state['gio']
     t1 = time.time()
-    # Можно представить движение ворот как движение точки по прямой.
-    # закрыто |----#--------------| открыто
-    # Если ворота открываются, то точка смещается вправо и значение увеличивается.
-    # Иначе они закрываются, точнка смещается влево и значение уменьшается.
+
+    message = 'Открываю ворота' if gate_is_opening else 'Закрываю ворота'
+
+    # You can think of the motion of the gate as the motion of a point in a straight line.
+    # closed |----#--------------| open
+    # If the gate opens, the point shifts to the right and the value increases.
+    # Otherwise it is closed, the point moves to the left and the value decreases.
+
     if position != 0:
         if gate_is_opening:
             position = position + t0 - t1
         else:
             position = position + t1 - t0
 
-    # Проверка крайних положений ворот, открыты или закрыты.
+    # Checking the end point of the gate. 0 is close, 25 is open.
     if position <= 0:
-        # закрыты
-        message = 'Открываю ворота'
         position = 1
     elif position >= 25:
-        # открыты
-        message = 'Закрываю ворота'
         position = 24
-
     else:
-        # Промежуточное состояние, ворота находится в движенни.
-        # Если поступил сигнал их нужно остановить и продолжить движение
-        # в другом направлении.
         relay.click()
-        if gate_is_opening:
-            message = 'Открываю ворота'
-        else:
-            message = 'Закрываю ворота'
 
     gate_is_opening = not gate_is_opening
     t0 = t1
     relay.click()
 
-    # упаковка состояния в словарь
     gate_state['pos'] = position
     gate_state['t0'] = t0
     gate_state['gio'] = gate_is_opening
