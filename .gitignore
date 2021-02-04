@@ -9,7 +9,7 @@
 # Test binary, built with `go test -c`
 *.test
 venv
-secret.txt
+secret.json
 notes.txt
 *.gitignore
 # Output of the go coverage tool, specifically when used with LiteIDE

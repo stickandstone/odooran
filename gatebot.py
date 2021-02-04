@@ -7,9 +7,13 @@ from servises import gate_control as gate
 import logging
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
+import json
 
+with open('secret.json') as conf_file:
+    conf = json.load(conf_file)
 
-SECRET, IDD = open('secret.txt').read().split(',')
+TOKEN = conf['TOKEN']
+IDD = conf['CHAT_ID']
 
 gate_state_global = {
     "pos": 0,
@@ -45,7 +49,7 @@ def make_click(update: Update, context: CallbackContext) -> None:
 
 
 def main() -> None:
-    updater = Updater(SECRET, use_context=True)
+    updater = Updater(TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
